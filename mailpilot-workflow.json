@@ -1,0 +1,303 @@
+{
+  "name": "MailPilot AI",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 50,
+        "filters": {},
+        "options": {}
+      },
+      "id": "47cc40d0-6a3f-455b-b9e8-4a799f95735d",
+      "name": "Incoming Email Listener",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -528,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $node[\"Incoming Email Listener\"].json[\"id\"] }}",
+        "simple": false,
+        "options": {}
+      },
+      "id": "4caabd41-1b35-4919-8678-00cf4390aeed",
+      "name": "Fetch Full Email Content",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "ad518971-9633-4de8-968b-ea550b413bda",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "YOUR_EMAIL@gmail.com",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b17fb107-7ba5-4013-80ba-83bd79dc1dae",
+      "name": "Self-Email Protection",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        144,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "118d5652-f83e-4c60-bd0d-8cc7807081c8",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "no-reply",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "80c535f1-dcea-420e-9739-286262d4e43b",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "noreply",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "fdc60cf6-37d7-4d9b-9af5-50957bb7baf8",
+              "leftValue": "={{ $json.labelIds }}",
+              "rightValue": "SPAM",
+              "operator": {
+                "type": "array",
+                "operation": "notContains",
+                "rightType": "any"
+              }
+            },
+            {
+              "id": "6ca0ab4e-04e4-4228-84bd-e72e5ff16898",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "mailer-daemon",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "2cd8f121-6ba7-47b4-8f8c-245fd7d05722",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "automated",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3cf24d02-ab67-4768-b93a-2ee5ddc5df7c",
+      "name": "Spam & Automated Email Filter",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        368,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Sender name: {{ $json.from.value[0].name }}\nSender email: {{ $json.from.value[0].address }}\nSubject: {{ $json.subject }}\n\nEmail body:\n{{ $json.text }}",
+        "options": {
+          "systemMessage": "You are an intelligent AI email auto-reply assistant.\n\nYour task is to read incoming emails, understand their intent,\nand generate an appropriate professional reply.\n\nRules:\n\n1. Always respond according to the incoming email.\n2. Never rewrite the original email as a new announcement.\n3. Identify the email's purpose before drafting a reply.\n4. For meeting invitations, confirm attendance politely.\n5. For questions, provide relevant answers when information is available.\n6. For requests, acknowledge and respond appropriately.\n7. For urgent messages, use a professional and prompt tone.\n8. For greetings, respond politely.\n9. Never invent personal information or commitments.\n10. Keep replies short, natural and professional.\n11. Return only the reply body text (greeting, message, sign-off). Do NOT include a subject line, markdown, asterisks or explanations.\n\nIf essential information is missing, do not invent it.\n\nAdditional Reply Rules:\n\n1. Address the sender by their name when available.\n2. Never use generic greetings like \"Dear Team\" when the sender's name is known.\n3. Always sign off as Aditya Chauhan.\n4. Never use placeholders such as [Your Name].\n5. For meeting invitations, clearly confirm attendance.\n6. Do not repeat the entire original email.\n7. Keep replies concise, natural and professional.\n\nGreeting and Context Rules:\n\n- Use the \"Sender name\" given above the email body, and address them by their first name (e.g. \"Dear Sidd,\").\n- Never take the greeting name from the signature inside the email body unless the sender name is missing.\n- For meeting confirmations, always mention the exact meeting date and time.\n- Never omit important details from the original invitation.\n- Keep the reply concise and natural.\nCRITICAL CONTEXT HANDLING RULES:\n\n1. Read the entire incoming email before generating a reply.\n2. Extract all relevant details, including names, dates, times, locations and deadlines.\n3. Never ask for information that is already provided in the original email.\n4. Never say that the date or time is missing if it exists in the email.\n5. For meeting invitations, confirm attendance using the exact date, time and venue provided.\n6. Do not contradict yourself by confirming attendance and then asking for meeting details.\n7. If the email contains all meeting details, acknowledge them directly.\n8. Never invent or change information."
+        }
+      },
+      "id": "60f28fe6-38ca-4a83-adb5-7ab2ef41b8f8",
+      "name": "AI Email Response Generator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        592,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-5-5",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 5.5"
+        },
+        "options": {}
+      },
+      "id": "de6e808d-1d34-44f4-b2a8-6d110db13c57",
+      "name": "LLM – Email Intelligence Engine",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        672,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{$node[\"Incoming Email Listener\"].json[\"id\"]}}",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "c0fff95f-7cb1-42dc-97c7-04b143f5d33a",
+      "name": "Automatic Email Responder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "removeItemsSeenInPreviousExecutions",
+        "dedupeValue": "={{ $json.id }}",
+        "options": {}
+      },
+      "id": "a36e5330-1c2b-4845-b46b-3dd4bca51e2f",
+      "name": "Duplicate Email Filter",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Incoming Email Listener": {
+      "main": [
+        [
+          {
+            "node": "Fetch Full Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Full Email Content": {
+      "main": [
+        [
+          {
+            "node": "Duplicate Email Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Self-Email Protection": {
+      "main": [
+        [
+          {
+            "node": "Spam & Automated Email Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spam & Automated Email Filter": {
+      "main": [
+        [
+          {
+            "node": "AI Email Response Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Email Response Generator": {
+      "main": [
+        [
+          {
+            "node": "Automatic Email Responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM – Email Intelligence Engine": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Email Response Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate Email Filter": {
+      "main": [
+        [
+          {
+            "node": "Self-Email Protection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "nodeGroups": [],
+  "tags": []
+}
