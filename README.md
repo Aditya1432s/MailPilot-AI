@@ -1,2 +1,71 @@
-# MailPilot-AI
-Initial release of MailPilot AI – an AI-powered automated email response system.  Features: - Gmail incoming email detection - Full email content extraction - Duplicate email protection - Self-email filtering - Spam and automated email filtering - AI-powered email understanding and reply generation - Automatic Gmail replies
+# MailPilot AI 🤖
+
+### AI-Powered Intelligent Email Automation System
+
+MailPilot AI is an intelligent email automation system built using **n8n, Gmail, and Anthropic Claude**. It automatically analyzes incoming emails, understands their intent, and generates context-aware professional replies.
+
+## 🚀 Features
+
+- Automatic incoming email detection
+- Full email content extraction
+- Duplicate email filtering
+- Self-email protection
+- Spam and automated email filtering
+- AI-powered email understanding
+- Context-aware professional reply generation
+- Automatic Gmail replies within the original email thread
+
+## 🛠️ Tech Stack
+
+- **Automation:** n8n
+- **AI Model:** Anthropic Claude Haiku 5.5
+- **Email Integration:** Gmail API
+- **AI Workflow:** n8n AI Agent
+
+## ⚙️ Workflow Architecture
+
+1. Incoming Email Listener
+2. Fetch Full Email Content
+3. Duplicate Email Filter
+4. Self-Email Protection
+5. Spam & Automated Email Filter
+6. AI Email Response Generator
+7. Automatic Email Responder
+
+## 📂 Project Structure
+
+```text
+MailPilot-AI/
+├── README.md
+└── workflow/
+    └── mailpilot-workflow.json
+```
+
+## 🔧 Setup Instructions
+
+1. Download the workflow JSON from this repository.
+2. Import it into your n8n instance.
+3. Configure your own Gmail credentials.
+4. Configure your Anthropic API credentials.
+5. Replace `YOUR_EMAIL@gmail.com` with your Gmail address in the self-email protection node.
+6. Test the workflow with sample emails.
+7. Activate the workflow after successful testing.
+
+## 🔐 Security
+
+- Never upload API keys, OAuth tokens, or passwords.
+- Configure your own credentials after importing.
+- Do not share private email content or personal information.
+
+## 👨‍💻 Author
+
+**Aditya Chauhan**
+
+AI & Machine Learning Student
+
+GitHub: [@Aditya1432s](https://github.com/Aditya1432s)
+
+---
+
+*Built with n8n, Gmail, and AI-powered automation.*
+
