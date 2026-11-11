@@ -35,6 +35,12 @@ MailPilot AI is an intelligent email automation system built using **n8n, Gmail,
 ## 📸 Workflow Overview
 
 ![MailPilot AI Workflow](workflow-overview.png)
+## 💬 AI-Generated Email Reply
+
+MailPilot AI analyzes incoming emails and generates context-aware professional replies automatically.
+
+![MailPilot AI Email Reply](email-reply.png)
+
 ## 📂 Project Structure
 
 ```text
