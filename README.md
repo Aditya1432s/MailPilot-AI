@@ -85,6 +85,11 @@ MailPilot-AI/
 - Configure your own credentials after importing.
 - Do not share private email content or personal information.
 
+## 📄 License
+
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
+
 ## 👨‍💻 Author
 
 **Aditya Chauhan**
