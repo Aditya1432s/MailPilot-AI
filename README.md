@@ -32,6 +32,23 @@ MailPilot AI is an intelligent email automation system built using **n8n, Gmail,
 6. AI Email Response Generator
 7. Automatic Email Responder
 
+## 🏗️ Project Architecture
+
+MailPilot AI follows a sequential automation pipeline:
+
+1. **Email Monitoring:** Gmail Trigger detects incoming emails every minute.
+2. **Email Extraction:** Gmail retrieves the complete email content.
+3. **Duplicate Detection:** Previously processed emails are filtered out.
+4. **Self-Email Protection:** Emails sent from the configured account are excluded.
+5. **Spam Filtering:** Spam and automated emails are blocked.
+6. **AI Processing:** Anthropic Claude analyzes the email's intent and context.
+7. **Reply Generation:** The AI generates a concise, professional response.
+8. **Email Delivery:** Gmail sends the response within the original email thread.
+
+**Architecture Flow:**
+
+`Gmail → Email Extraction → Duplicate Filter → Security Filters → AI Agent → Claude → Gmail Reply`
+
 ## 📸 Workflow Overview
 
 ![MailPilot AI Workflow](workflow-overview.png)
